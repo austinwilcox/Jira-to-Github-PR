@@ -17,6 +17,7 @@ func main() {
   output, err := exec.Command("./credentialHelper.sh").Output(); if err != nil {
     log.Fatal(err)
   }
+  //TODO: Remove the stdout \n that gets added when reading from stdout
   password := output
 
   response := getJiraTicketDescription(jiraUrl, ticketId, username, password)
@@ -39,13 +40,13 @@ func getJiraTicketDescription(jiraUrl string, ticketId string, username string, 
     log.Fatal(err)
   }
   defer response.Body.Close()
+  //TODO: Check the status code here to ensure that we are getting data back
 
   responseData, err := io.ReadAll(response.Body); if err != nil {
     log.Fatal(err)
   }
   myData := JiraIssue{}
   json.Unmarshal(responseData, &myData)
-  fmt.Println(myData)
   var myDescriptionText []string
   for _, content := range myData.Fields.Description.Content {
     for _, text := range content.Content {
